@@ -1,5 +1,7 @@
 package lectures.part4implicits
 
+import scala.language.implicitConversions
+
 /**
   * Created by Daniel.
   */
@@ -12,20 +14,25 @@ object ImplicitsIntro extends App {
     def greet = s"Hi, my name is $name!"
   }
 
-  implicit def fromStringToPerson(str: String): Person = Person(str)
+  object Person {
+    implicit def fromStringToPerson(str: String): Person = Person(str)
+  }
 
-  println("Peter".greet) // println(fromStringToPerson("Peter").greet)
+  import Person._
+  println(("Peter").greet) // println(fromStringToPerson("Peter").greet)
 
-//  class A {
-//    def greet: Int = 2
-//  }
-//  implicit def fromStringToA(str: String): A = new A
+  class A {
+    def greet: Int = 2
+  }
 
+  object A {
+    implicit def fromStringToA(str: String): A = new A
+  }
   // implicit parameters
   def increment(x: Int)(implicit amount: Int) = x + amount
   implicit val defaultAmount = 10
 
-  increment(2)
+  increment(2)(7)
   // NOT default args
 
 }
