@@ -53,20 +53,26 @@ object JSONSerialization extends App {
         }
       }
      */
-    def stringify: String = values.map {
-      case (key, value) => "\"" + key + "\":" + value.stringify
-    }
-      .mkString("{", ",", "}")
+    def stringify: String =
+      values
+        .map {
+          case (key, value) => "\"" + key + "\":" + value.stringify
+        }
+        .mkString("{", ",", "}")
 
   }
 
-  val data = JSONObject(Map(
-    "user" -> JSONString("Daniel"),
-    "posts" -> JSONArray(List(
-      JSONString("Scala Rocks!"),
-      JSONNumber(453)
-    ))
-  ))
+  val data = JSONObject(
+    Map(
+      "user" -> JSONString("Daniel"),
+      "posts" -> JSONArray(
+        List(
+          JSONString("Scala Rocks!"),
+          JSONNumber(453)
+        )
+      )
+    )
+  )
 
   println(data.stringify)
 
@@ -126,10 +132,14 @@ object JSONSerialization extends App {
   // call stringify on result
   val now = new Date(System.currentTimeMillis())
   val john = User("John", 34, "john@rockthejvm.com")
-  val feed = Feed(john, List(
-    Post("hello", now),
-    Post("look at this cute puppy", now)
-  ))
+
+  val feed = Feed(
+    john,
+    List(
+      Post("hello", now),
+      Post("look at this cute puppy", now)
+    )
+  )
 
   println(feed.toJSON.stringify)
 
