@@ -1,7 +1,7 @@
 package lectures.part4implicits
 
-import scala.concurrent.Future
 import scala.concurrent.ExecutionContext.Implicits.global
+import scala.concurrent.Future
 
 /**
   * Created by Daniel.
@@ -14,13 +14,12 @@ object MagnetPattern extends App {
   class P2PResponse
   class Serializer[T]
 
-
   trait Actor {
     def receive(statusCode: Int): Int
     def receive(request: P2PRequest): Int
     def receive(response: P2PResponse): Int
-    def receive[T : Serializer](message: T): Int
-    def receive[T : Serializer](message: T, statusCode: Int): Int
+    def receive[T: Serializer](message: T): Int
+    def receive[T: Serializer](message: T, statusCode: Int): Int
     def receive(future: Future[P2PRequest]): Int
     //    def receive(future: Future[P2PResponse]): Int
     // lots of overloads
@@ -45,6 +44,7 @@ object MagnetPattern extends App {
   def receive[R](magnet: MessageMagnet[R]): R = magnet()
 
   implicit class FromP2PRequest(request: P2PRequest) extends MessageMagnet[Int] {
+
     def apply(): Int = {
       // logic for handling a P2PRequest
       println("Handling P2P request")
@@ -53,6 +53,7 @@ object MagnetPattern extends App {
   }
 
   implicit class FromP2PResponse(response: P2PResponse) extends MessageMagnet[Int] {
+
     def apply(): Int = {
       // logic for handling a P2PResponse
       println("Handling P2P response")
@@ -114,6 +115,7 @@ object MagnetPattern extends App {
    */
 
   class Handler {
+
     def handle(s: => String) = {
       println(s)
       println(s)
@@ -121,13 +123,14 @@ object MagnetPattern extends App {
     // other overloads
   }
 
-  trait HandleMagnet  {
+  trait HandleMagnet {
     def apply(): Unit
   }
 
   def handle(magnet: HandleMagnet) = magnet()
 
   implicit class StringHandle(s: => String) extends HandleMagnet {
+
     override def apply(): Unit = {
       println(s)
       println(s)
@@ -145,4 +148,5 @@ object MagnetPattern extends App {
     new StringHandle("magnet")
   }
   // careful!
+
 }
