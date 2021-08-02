@@ -9,9 +9,11 @@ object RockingInheritance extends App {
   trait Writer[T] {
     def write(value: T): Unit
   }
+
   trait Closeable {
     def close(status: Int): Unit
   }
+
   trait GenericStream[T] {
     // some methods
     def foreach(f: T => Unit): Unit
@@ -47,6 +49,7 @@ object RockingInheritance extends App {
   }
 
   trait Green extends Cold {
+
     override def print: Unit = {
       println("green")
       super.print
@@ -54,6 +57,7 @@ object RockingInheritance extends App {
   }
 
   trait Blue extends Cold {
+
     override def print: Unit = {
       println("blue")
       super.print
@@ -65,6 +69,7 @@ object RockingInheritance extends App {
   }
 
   class White extends Red with Green with Blue {
+
     override def print: Unit = {
       println("white")
       super.print
@@ -73,5 +78,9 @@ object RockingInheritance extends App {
 
   val color = new White
   color.print
+
+  /**
+  * white -super blue -super green -super cold
+  */
 
 }
