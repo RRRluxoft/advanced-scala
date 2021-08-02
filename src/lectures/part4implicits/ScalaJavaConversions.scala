@@ -1,6 +1,8 @@
 package lectures.part4implicits
 
 import java.{util => ju}
+import scala.language.implicitConversions
+
 /**
   * Created by Daniel.
   */
@@ -29,7 +31,7 @@ object ScalaJavaConversions extends App {
 
   println(juNumbersBuffer.asScala eq numbersBuffer)
 
-  val numbers = List(1,2,3)
+  val numbers = List(1, 2, 3)
   val juNumbers = numbers.asJava
   val backToScala = juNumbers.asScala
   println(backToScala eq numbers) // false
@@ -42,16 +44,18 @@ object ScalaJavaConversions extends App {
     create a Scala-Java Optional-Option
       .asScala
    */
+
   class ToScala[T](value: => T) {
     def asScala: T = value
   }
 
   implicit def asScalaOptional[T](o: ju.Optional[T]): ToScala[Option[T]] = new ToScala[Option[T]](
-    if (o.isPresent) Some(o.get) else None
+    if (o.isPresent) Some(o.get) else Option.empty[T]
   )
 
   val juOptional: ju.Optional[Int] = ju.Optional.of(2)
-  val scalaOption = juOptional.asScala
-  println(scalaOption)
+  val scalaOption = juOptional.asScala // : asScalaOptional(juOptional).asScala
+
+  println(s"scalaOption is: $scalaOption")
 
 }
