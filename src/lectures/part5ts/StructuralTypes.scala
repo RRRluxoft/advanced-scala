@@ -1,5 +1,7 @@
 package lectures.part5ts
 
+import scala.language.reflectiveCalls
+
 /**
   * Created by Daniel.
   */
@@ -27,10 +29,7 @@ object StructuralTypes extends App {
   })
   closeQuietly(new HipsterCloseable)
 
-
-
   // TYPE REFINEMENTS
-
 
   type AdvancedCloseable = JavaCloseable {
     def closeSilently(): Unit
@@ -44,16 +43,15 @@ object StructuralTypes extends App {
   def closeShh(advCloseable: AdvancedCloseable): Unit = advCloseable.closeSilently()
 
   closeShh(new AdvancedJavaCloseable)
-  // closeShh(new HipsterCloseable)
+//   closeShh(new HipsterCloseable)
 
   // using structural types as standalone types
   def altClose(closeable: { def close(): Unit }): Unit = closeable.close()
 
-
   // type-checking => duck typing
 
-  type SoundMaker = {
-    def makeSound(): Unit
+  type SoundMaker[R] = {
+    def makeSound(): R
   }
 
   class Dog {
@@ -64,8 +62,9 @@ object StructuralTypes extends App {
     def makeSound(): Unit = println("vrooom!")
   }
 
-  val dog: SoundMaker = new Dog
-  val car: SoundMaker = new Car
+  val dog: SoundMaker[Unit] = new Dog
+  val car: SoundMaker[Unit] = new Car
+  dog.makeSound()
 
   // static duck typing
 
@@ -76,7 +75,7 @@ object StructuralTypes extends App {
    */
 
   // 1.
-  trait CBL[+T]  {
+  trait CBL[+T] {
     def head: T
     def tail: CBL[T]
   }
@@ -102,7 +101,7 @@ object StructuralTypes extends App {
   case class CBCons[T](override val head: T, override val tail: CBL[T]) extends CBL[T]
 
   f(CBCons(2, CBNil))
-  f(new  Human) // ?! T = Brain !!
+  f(new Human) // ?! T = Brain !!
 
   // 2.
   object HeadEqualizer {

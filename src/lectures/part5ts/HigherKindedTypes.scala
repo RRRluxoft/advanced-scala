@@ -1,7 +1,6 @@
 package lectures.part5ts
 
-import scala.concurrent.Future
-import scala.concurrent.ExecutionContext.Implicits.global
+import scala.language.higherKinds
 
 /**
   * Created by Daniel.
@@ -29,6 +28,9 @@ object HigherKindedTypes extends App {
 //      a <- listA
 //      b <- listB
 //    } yield (a, b)
+
+  def multiply[A, B](listA: List[A], listB: List[B]): List[(A, B)] = listA.flatMap(a => listB.map(b => (a, b)))
+  println(multiply(List(1, 2), List("a", "b")))
 //
 //  def multiply[A, B](listA: Option[A], listB: Option[B]): Option[(A, B)] =
 //    for {
@@ -68,14 +70,12 @@ object HigherKindedTypes extends App {
     ma.flatMap(a => mb.map(b => (a,b)))
    */
 
-
-
-  val monadList = new MonadList(List(1,2,3))
+  val monadList = new MonadList(List(1, 2, 3))
   monadList.flatMap(x => List(x, x + 1)) // List[Int]
   // Monad[List, Int] => List[Int]
-  monadList.map(_ * 2) // List[Int
+  monadList.map(_ * 2)                   // List[Int
   // Monad[List, Int] => List[Int]
 
-  println(multiply(List(1,2), List("a", "b")))
+  println(multiply(List(1, 2), List("a", "b")))
   println(multiply(Some(2), Some("scala")))
 }

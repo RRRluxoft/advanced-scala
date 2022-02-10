@@ -2,8 +2,6 @@ package lectures.part4implicits
 
 import java.util.Date
 
-import lectures.part4implicits.JSONSerialization.JSONNumber
-
 /**
   * Created by Daniel.
   */
@@ -29,6 +27,7 @@ object JSONSerialization extends App {
   }
 
   final case class JSONString(value: String) extends JSONValue {
+
     def stringify: String =
       "\"" + value + "\""
   }
@@ -42,6 +41,7 @@ object JSONSerialization extends App {
   }
 
   final case class JSONObject(values: Map[String, JSONValue]) extends JSONValue {
+
     /*
       {
         name: "John"
@@ -64,7 +64,7 @@ object JSONSerialization extends App {
 
   val data = JSONObject(
     Map(
-      "user" -> JSONString("Daniel"),
+      "user"  -> JSONString("Daniel"),
       "posts" -> JSONArray(
         List(
           JSONString("Scala Rocks!"),
@@ -91,6 +91,7 @@ object JSONSerialization extends App {
   // 2.3 conversion
 
   implicit class JSONOps[T](value: T) {
+
     def toJSON(implicit converter: JSONConverter[T]): JSONValue =
       converter.convert(value)
   }
@@ -108,25 +109,39 @@ object JSONSerialization extends App {
 
   // custom data types
   implicit object UserConverter extends JSONConverter[User] {
-    def convert(user: User): JSONValue = JSONObject(Map(
-      "name" -> JSONString(user.name),
-      "age" -> JSONNumber(user.age),
-      "email" -> JSONString(user.email)
-    ))
+
+    def convert(user: User): JSONValue =
+      JSONObject(
+        Map(
+          "name"  -> JSONString(user.name),
+          "age"   -> JSONNumber(user.age),
+          "email" -> JSONString(user.email)
+        )
+      )
   }
 
   implicit object PostConverter extends JSONConverter[Post] {
-    def convert(post: Post): JSONValue = JSONObject(Map(
-      "content" -> JSONString(post.content),
-      "created:" -> JSONString(post.createdAt.toString)
-    ))
+
+    def convert(post: Post): JSONValue =
+      JSONObject(
+        Map(
+          "content"  -> JSONString(post.content),
+          "created:" -> JSONString(post.createdAt.toString)
+        )
+      )
   }
 
   implicit object FeedConverter extends JSONConverter[Feed] {
-    def convert(feed: Feed): JSONValue = JSONObject(Map(
-      "user" -> feed.user.toJSON,
-      "posts" -> JSONArray(feed.posts.map(_.toJSON))
-    ))
+
+    def convert(feed: Feed): JSONValue =
+      JSONObject(
+        Map(
+//          "user" -> UserConverter.convert(feed.user), // but:
+          "user"  -> feed.user.toJSON,
+//          "posts" -> JSONArray(feed.posts.map(PostConverter.convert)),
+          "posts" -> JSONArray(feed.posts.map(_.toJSON))
+        )
+      )
   }
 
   // call stringify on result

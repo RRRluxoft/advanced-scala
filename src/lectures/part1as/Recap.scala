@@ -2,7 +2,6 @@ package lectures.part1as
 
 import scala.annotation.tailrec
 
-
 /**
   * Created by Daniel.
   */
@@ -23,6 +22,11 @@ object Recap extends App {
 
   // functions
   def aFunction(x: Int): Int = x + 1
+  def anotherFunction: Int => Int = (x: Int) => x + 1
+  val list = (1 to 7).toList
+  def aFuncByName(x: => Int) = x * 10
+  val res = list.map(i => aFuncByName(i))
+  println(res)
 
   // recursion: stack and tail
   @tailrec def factorial(n: Int, accumulator: Int): Int =
@@ -39,12 +43,12 @@ object Recap extends App {
     def eat(a: Animal): Unit
   }
 
-  class Crocodile extends Animal with Carnivore {
+  class Crocodile extends Animal { self: Carnivore =>
     override def eat(a: Animal): Unit = println("crunch!")
   }
 
   // method notations
-  val aCroc = new Crocodile
+  val aCroc = new Crocodile with Carnivore
   aCroc.eat(aDog)
   aCroc eat aDog // natural language
 
@@ -63,14 +67,15 @@ object Recap extends App {
 
   // exceptions and try/catch/finally
 
-  val throwsException = throw new RuntimeException  // Nothing
-  val aPotentialFailure = try {
-    throw new RuntimeException
-  } catch {
-    case e: Exception => "I caught an exception"
-  } finally {
-    println("some logs")
-  }
+//  val throwsException = throw new RuntimeException // Nothing
+  val aPotentialFailure =
+    try {
+      throw new RuntimeException
+    } catch {
+      case e: Exception => s"I caught an exception ${e.getMessage}"
+    } finally {
+      println("some logs")
+    }
 
   // packaging and imports
 
@@ -82,12 +87,12 @@ object Recap extends App {
   incrementer(1)
 
   val anonymousIncrementer = (x: Int) => x + 1
-  List(1,2,3).map(anonymousIncrementer) // HOF
+  List(1, 2, 3).map(anonymousIncrementer) // HOF
   // map, flatMap, filter
 
   // for-comprehension
   val pairs = for {
-    num <- List(1,2,3) // if condition
+    num  <- List(1, 2, 3) // if condition
     char <- List('a', 'b', 'c')
   } yield num + "-" + char
 
@@ -102,6 +107,7 @@ object Recap extends App {
 
   // pattern matching
   val x = 2
+
   val order = x match {
     case 1 => "first"
     case 2 => "second"
@@ -110,6 +116,7 @@ object Recap extends App {
   }
 
   val bob = Person("Bob", 22)
+
   val greeting = bob match {
     case Person(n, _) => s"Hi, my name is $n"
   }

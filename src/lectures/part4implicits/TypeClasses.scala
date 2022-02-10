@@ -21,9 +21,10 @@ object TypeClasses extends App {
 
   // option 2 - pattern matching
   object HTMLSerializerPM {
+
     def serializeToHtml(value: Any) = value match {
       case User(n, a, e) =>
-      case _ =>
+      case _             =>
     }
   }
 
@@ -46,8 +47,9 @@ object TypeClasses extends App {
 
   // 1 - we can define serializers for other  types
   import java.util.Date
+
   object DateSerializer extends HTMLSerializer[Date] {
-    override def serialize(date: Date): String = s"<div>${date.toString()}</div>"
+    override def serialize(date: Date): String = s"<div>${date.toString}</div>"
   }
 
   // 2 - we can define MULTIPLE serializers
@@ -57,6 +59,7 @@ object TypeClasses extends App {
 
   // part 2
   object HTMLSerializer {
+
     def serialize[T](value: T)(implicit serializer: HTMLSerializer[T]): String =
       serializer.serialize(value)
 
@@ -67,19 +70,19 @@ object TypeClasses extends App {
     override def serialize(value: Int): String = s"<div style: color=blue>$value</div>"
   }
 
-  println(HTMLSerializer.serialize(42))
-  println(HTMLSerializer.serialize(john))
+  println(HTMLSerializer.serialize(42)(IntSerializer))
+  println(HTMLSerializer.serialize(john)(UserSerializer))
 
   // access to the entire type class  interface
   println(HTMLSerializer[User].serialize(john))
-
 
   // part 3
   implicit class HTMLEnrichment[T](value: T) {
     def toHTML(implicit serializer: HTMLSerializer[T]): String = serializer.serialize(value)
   }
 
-  println(john.toHTML)  // println(new HTMLEnrichment[User](john).toHTML(UserSerializer))
+  println(john.toHTML) //
+  println(new HTMLEnrichment[User](john).toHTML(UserSerializer))
   // COOL!
   /*
     - extend to new types
@@ -87,8 +90,8 @@ object TypeClasses extends App {
     - super expressive!
    */
 
-  println(2.toHTML)
-  println(john.toHTML(PartialUserSerializer))
+  println(2.toHTML(IntSerializer))
+  println(new HTMLEnrichment[User](john).toHTML(PartialUserSerializer))
 
   /*
     - type class itself --- HTMLSerializer[T] { .. }
@@ -100,7 +103,7 @@ object TypeClasses extends App {
   def htmlBoilerplate[T](content: T)(implicit serializer: HTMLSerializer[T]): String =
     s"<html><body> ${content.toHTML(serializer)}</body></html>"
 
-  def htmlSugar[T : HTMLSerializer](content: T): String = {
+  def htmlSugar[T: HTMLSerializer](content: T): String = {
     val serializer = implicitly[HTMLSerializer[T]]
     // use serializer
     s"<html><body> ${content.toHTML(serializer)}</body></html>"
@@ -112,7 +115,6 @@ object TypeClasses extends App {
 
   // in some other part of the  code
   val standardPerms = implicitly[Permissions]
-
+  standardPerms.mask
 
 }
-

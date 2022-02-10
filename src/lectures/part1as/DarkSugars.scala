@@ -15,24 +15,20 @@ object DarkSugars extends App {
     42
   }
 
-  val aTryInstance = Try {  // java's try {...}
+  val aTryInstance = Try { // java's try {...}
     throw new RuntimeException
   }
 
-  List(1,2,3).map { x =>
-    x + 1
-  }
+  List(1, 2, 3).map(x => x + 1)
 
   // syntax sugar #2: single abstract method
-  trait Action {
-    def act(x: Int): Int
+  trait Action[T] {
+    def act(x: T): T
   }
 
-  val anInstance: Action = new Action {
-    override def act(x: Int): Int = x + 1
-  }
+  val anInstance: Action[Int] = (x: Int) => x + 1
 
-  val aFunkyInstance: Action = (x: Int) => x + 1  // magic
+  val aFunkyInstance: Action[Int] = (x: Int) => x + 1 // magic
 
   // example: Runnables
   val aThread = new Thread(new Runnable {
@@ -57,7 +53,7 @@ object DarkSugars extends App {
 
   // scala spec: last char decides associativity of method
   1 :: 2 :: 3 :: List(4, 5)
-  List(4,5).::(3).::(2).::(1) // equivalent
+  List(4, 5).::(3).::(2).::(1) // equivalent
 
   class MyStream[T] {
     def -->:(value: T): MyStream[T] = this // actual implementation here
@@ -82,8 +78,9 @@ object DarkSugars extends App {
   val towards: Int --> String = ???
 
   // syntax sugar #6: update() is very special, much like apply()
-  val anArray = Array(1,2,3)
-  anArray(2) = 7  // rewritten to anArray.update(2, 7)
+  val anArray = Array(1, 2, 3)
+  anArray(2) = 7 // rewritten to anArray.update(2, 7)
+  anArray.update(2, 7)
   // used in mutable collections
   // remember apply() AND update()!
 
@@ -96,6 +93,7 @@ object DarkSugars extends App {
   }
 
   val aMutableContainer = new Mutable
-  aMutableContainer.member = 42 // rewrittern as aMutableContainer.member_=(42)
+  aMutableContainer.member = 42 // rewrittern as
+  aMutableContainer.member_=(42)
 
 }
